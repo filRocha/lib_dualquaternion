@@ -1,7 +1,7 @@
 #ifndef DUALQUATERNION_DUALQUATERNION_H
 #define DUALQUATERNION_DUALQUATERNION_H
 
-#include <Quaternion.h>
+#include <lib_quaternion/Quaternion.h>
 
 # include <assert.h>
 
