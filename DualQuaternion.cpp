@@ -6,29 +6,29 @@
 /* == Constructors == */
 
 DualQuaternion::DualQuaternion() {
-    this->q_scalar = Quaternion(0,0,0,1);
+    this->q_primary = Quaternion(0, 0, 0, 1);
     this->q_dual = Quaternion(0,0,0,0);
 }
 
 
 /* Creates a dual-quaternion from two quaternions */
 DualQuaternion::DualQuaternion(Quaternion s, Quaternion d){
-    this->q_scalar = s.Normalize();
+    this->q_primary = s.Normalize();
     this->q_dual = d;
 }
 
 
 /* Creates a dual-quaternion from an orientation and a translation 3D vector */
 DualQuaternion::DualQuaternion(Quaternion s, double (&trans)[3]) {
-    this->q_scalar = s.Normalize();
-    this->q_dual = (Quaternion(0, trans[0], trans[1], trans[2]) * this->q_scalar) * 0.5f;
+    this->q_primary = s.Normalize();
+    this->q_dual = (Quaternion(0, trans[0], trans[1], trans[2]) * this->q_primary) * 0.5f;
 };
 
 
 /* == Getters and Setters == */
 
-Quaternion DualQuaternion::getQscalar() const {return this->q_scalar; };
-void DualQuaternion::setQscalar(Quaternion q_scalar) {this->q_scalar = q_scalar; };
+Quaternion DualQuaternion::getQscalar() const {return this->q_primary; };
+void DualQuaternion::setQscalar(Quaternion q_scalar) {this->q_primary = q_scalar; };
 Quaternion DualQuaternion::getQdual() const {return this->q_dual; };
 void DualQuaternion::setQdual(Quaternion q_dual) {this->q_dual = q_dual; }
 
@@ -37,25 +37,25 @@ void DualQuaternion::setQdual(Quaternion q_dual) {this->q_dual = q_dual; }
 
 /* Sum */
 DualQuaternion DualQuaternion::operator+ (const DualQuaternion& rhs){
-    return  DualQuaternion(this->q_scalar + rhs.q_scalar, this->q_dual + rhs.q_dual);
+    return  DualQuaternion(this->q_primary + rhs.q_primary, this->q_dual + rhs.q_dual);
 }
 
 
 /* Multiplication by a scalar */
 DualQuaternion DualQuaternion::operator* (const double rhs){
-    /*Quaternion s = this->q_scalar * rhs;
+    /*Quaternion s = this->q_primary * rhs;
     Quaternion d = this->q_dual * rhs;
     return DualQuaternion(s, d); */
 
-   return DualQuaternion(this->q_scalar * rhs,
+   return DualQuaternion(this->q_primary * rhs,
                           this->q_dual * rhs);
 }
 
 
 /* Multiplication by another dual-quaternion */
 DualQuaternion DualQuaternion::operator* (DualQuaternion rhs){
-    return DualQuaternion(rhs.q_scalar * this->q_scalar,
-                          (rhs.q_dual * this->q_scalar) + (rhs.q_scalar * this->q_dual));
+    return DualQuaternion(rhs.q_primary * this->q_primary,
+                          (rhs.q_dual * this->q_primary) + (rhs.q_primary * this->q_dual));
 }
 
 
@@ -63,16 +63,16 @@ DualQuaternion DualQuaternion::operator* (DualQuaternion rhs){
 
 // Dot product
 float DualQuaternion::Dot (const DualQuaternion& rhs){
-    return this->q_scalar.Dot(rhs.q_scalar);
+    return this->q_primary.Dot(rhs.q_primary);
 }
 
 
 // Normalize
 DualQuaternion DualQuaternion::Normalize(){
-    float mag = this->q_scalar.Dot(this->q_scalar);
+    float mag = this->q_primary.Dot(this->q_primary);
     assert(mag > 0.000001f);
     std::cout << "CHECK mag " << mag << std::endl;
-    return DualQuaternion(  this->q_scalar * (1.0f/mag),
+    return DualQuaternion(this->q_primary * (1.0f / mag),
                             this->q_dual   * (1.0f/mag));
 }
 

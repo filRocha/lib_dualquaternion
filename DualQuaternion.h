@@ -8,7 +8,7 @@
 /* Class definition */
 class DualQuaternion{
 private:
-    Quaternion q_scalar;
+    Quaternion q_primary;
     Quaternion q_dual;
 
 public:
